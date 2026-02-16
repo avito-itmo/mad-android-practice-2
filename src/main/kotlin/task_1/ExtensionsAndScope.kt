@@ -1,46 +1,53 @@
 package task_1
 
 // 1. Добавь функцию-расширение isPositive для Int
-// TODO
+fun Int.isPositive(): Boolean = this > 0
 
 // 2. Добавь extension-свойство isEven для Int
-// TODO
+val Int.isEven: Boolean
+    get() = this % 2 == 0
 
-// 3. Создай extension-функцию для String, которая возвращает самую частую букву (игнорируя регистр)
+// 3. Создай extension-функцию для String, которая возвращает самую частую букву
 fun String.mostFrequentChar(): Char? {
-    TODO()
+    if (this.isBlank()) return null
+
+    return this.lowercase()
+        .filter { it.isLetter() } // Игнорируем пробелы и знаки препинания
+        .groupingBy { it }
+        .eachCount()
+        .maxByOrNull { it.value }
+        ?.key
 }
 
-// 4. Используй let, чтобы преобразовать строку в число и вернуть 0 если null (метод toIntOrNull)
-fun safeParseInt(str: String): Int = TODO()
+// 4. Используй let, чтобы преобразовать строку в число и вернуть 0 если null
+fun safeParseInt(str: String): Int = str.toIntOrNull() ?: 0
 
 // 5. Используй `apply` для настройки объекта Car
-//    Установи марку "Toyota", модель "Camry" и год 2022
 data class Car(var brand: String = "", var model: String = "", var year: Int = 0)
 
-fun configureCar(): Car {
-    val car = Car()
-    TODO()
+fun configureCar(): Car = Car().apply {
+    brand = "Toyota"
+    model = "Camry"
+    year = 2022
 }
 
 // 6. Используй `also` для логирования создания объекта User
-//    Выведи в консоль "Creating user: [имя]" перед возвратом объекта
 data class User(val id: Int, val name: String)
 
-fun createUser(id: Int, name: String): User = TODO()
-
+fun createUser(id: Int, name: String): User = User(id, name).also {
+    println("Creating user: ${it.name}")
+}
 
 // 7. Используй `let` с именованным параметром для лучшей читаемости
-//    Преобразуй email к нижнему регистру и проверь правильность email
-fun validateEmail(email: String?): Boolean = TODO()
+fun validateEmail(email: String?): Boolean = email?.let { emailString ->
+    emailString.lowercase().contains("@") &&
+            emailString.contains(".") &&
+            emailString.indexOf("@") < emailString.lastIndexOf(".") &&
+            emailString.indexOf("@") > 0
+} ?: false
 
-// 8. Реализуй extension-функцию для List<T> с использованием withIndex и scope-функций,
-//    которая возвращает пары (index, элемент) для элементов, удовлетворяющих предикату
-fun <T> List<T>.indexedFilter(predicate: (T) -> Boolean): List<Pair<Int, T>> = TODO()
-
-// 9. Напиши цепочку scope-функций для безопасной навигации по вложенным nullable-объектам
-data class Company(val name: String, val address: Address?)
-data class Address(val street: String, val city: City?)
-data class City(val name: String, val country: String)
-
-fun getCompanyCountry(company: Company?): String? = TODO()
+// 8. Реализуй extension-функцию для List<T> с использованием withIndex и scope-функций
+fun <T> List<T>.indexedFilter(predicate: (T) -> Boolean): List<Pair<Int, T>> =
+    this.withIndex()
+        .filter { (_, value) -> predicate(value) }
+        .map { (index, value) -> index to value }
